@@ -12,10 +12,6 @@ app.use(express.json());
 
 app.use(express.static('public'));
 
-app.get('/', (req, res) =>
-  res.sendFile(path.join(__dirname, '/public/index.html'))
-);
-
 // filter by query code
 function filterByQuery(query, notesArray) {
   let filteredResults = notesArray;
@@ -33,6 +29,8 @@ function filterByQuery(query, notesArray) {
 
 // GET request get notes
 app.get('/api/notes', (req, res) => {
+
+  res.clearCookie(this.cookie, { path: '/api/notes' });
   // Send a message to the client
 
   let results = input;
@@ -45,7 +43,8 @@ app.get('/api/notes', (req, res) => {
   }  
 
   // Log our request to the terminal
-  //console.info(`${req.method} request received to get reviews`);
+  console.info(`${req.method} request received to get reviews`);
+  
 });
 
 app.post('/api/notes', (req, res) => {
@@ -110,7 +109,8 @@ app.delete('/api/notes', (req, res) => {
         throw err;
     }
 
-    var noteInfo =  `,{"title":"${req.query.title}","text":"${req.query.text}","noteID":"${req.query.noteID}"}`;
+    var noteInfo =  `
+    ,{"title":"${req.query.title}","text":"${req.query.text}","noteID":"${req.query.noteID}"}`;
     console.log(noteInfo.length);
 
     var position2 = data.indexOf(`,{"title":"${req.query.title}","text":"${req.query.text}","noteID":"${req.query.noteID}"}`);

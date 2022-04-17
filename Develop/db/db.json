@@ -1,14 +1,11 @@
 [
     {
         "title":"Test Title",
-        "text":"Test text",
+        "text":"Test text. You will NOT be able to delete this text.",
         "noteID":"aa23"
-    }
-    ,{"title":"Savage","text":"Animal","noteID":"08c9"}
-    ,{"title":"Aquatic","text":"Mammal","noteID":"d8d3"}
-    ,{"title":"fdsdsfdfdfghfj","text":"dsfdsfds","noteID":"b212"}
-    ,{"title":"rewtyuio","text":"esrtyuio","noteID":"2064"}
-    ,{"title":"rerer","text":"ewewew","noteID":"6841"}
-    ,{"title":"rewtyuio","text":"esrtyuio","noteID":"ad63"}
-    ,{"title":"adsfg","text":"asdfghj","noteID":"9077"}
+    }    
+    ,{"title":"Reimu Hakurei","text":"Shrine Maiden of Paradise","noteID":"6a29e88e-af47-f3a1-0cdc-76f6574752d7"}
+    ,{"title":"Marisa Kirisame","text":"Ordinary Magician","noteID":"2f7868c9-7f48-f67a-8556-8cede8fb5adf"}
+    ,{"title":"Sakuya Izayoi","text":"Sakuya Izayoi","noteID":"855284e7-54f2-b19e-ee99-41c203504c57"}
+    ,{"title":"Youmu Konpaku","text":"Youmu Konpaku","noteID":"899f603f-adff-48f5-053e-c3ebc1c3a8e4"}
 ]

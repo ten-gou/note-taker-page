@@ -23,6 +23,17 @@ const hide = (elem) => {
   elem.style.display = 'none';
 };
 
+//generates note id;
+const noteID = () => {
+  let s4 = () => {
+      return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+  }
+  //return id of format 'aaaaaaaa'-'aaaa'-'aaaa'-'aaaa'-'aaaaaaaaaaaa'
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
@@ -53,9 +64,7 @@ const deleteNote = (noteValueSet) => {
       'Content-Type': 'application/json',
     },
   })
-  console.log(noteValueSet)
 }
-
 
 //DONE
 const renderActiveNote = () => {
@@ -76,7 +85,8 @@ const renderActiveNote = () => {
 
 //DONE
 const handleNoteSave = () => {
-  const noteIDValue = noteID;
+
+  const noteIDValue = noteID();
   
   const newNote = {
     title: noteTitle.value,
@@ -85,19 +95,16 @@ const handleNoteSave = () => {
   };
 
   console.log('Successful POST request:', newNote);
-  saveNote(newNote);
-  getAndRenderNotes();
-  renderActiveNote();
-  
+  saveNote(newNote)
+  getAndRenderNotes().then(renderActiveNote())
 };
 
-// Delete the clicked note
+// Delete the clicked note DONE
 const handleNoteDelete = (e) => {
   // Prevents the click listener for the list from being called when the button inside of it is clicked
   e.stopPropagation();
 
   const note = e.target;
-  console.log(note);
 
   const noteBox = note.closest("li[class='list-group-item']");
 
@@ -107,16 +114,16 @@ const handleNoteDelete = (e) => {
     activeNote = {};
   }
 
-  deleteNote(noteValueSet)
-    getAndRenderNotes()
-    renderActiveNote()
+  noteBox.remove(note);
+
+  deleteNote(noteValueSet);
+  getAndRenderNotes().then(renderActiveNote());
 };
 
 // Sets the activeNote and displays it
 const handleNoteView = (e) => {
   e.preventDefault();
   activeNote = JSON.parse(e.target.parentElement.getAttribute('data-note'));
-  console.log(activeNote)
   renderActiveNote(activeNote);
 };
 
@@ -188,11 +195,6 @@ const renderNoteList = async (db) => {
   }
   
 };
-
-// NoteID
-const noteID = Math.floor((1 + Math.random()) * 0x10000)
-    .toString(16)
-    .substring(1);
 
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
