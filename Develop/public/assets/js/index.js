@@ -26,6 +26,7 @@ const hide = (elem) => {
 // activeNote is used to keep track of the note in the textarea
 let activeNote = {};
 
+//DONE?
 const getNotes = () =>
   fetch('/api/notes', {
     method: 'GET',
@@ -34,6 +35,7 @@ const getNotes = () =>
     },
   })
 
+//DONE
 const saveNote = (note) => {
   fetch(`/api/notes`, {
     method: 'POST',
@@ -44,18 +46,22 @@ const saveNote = (note) => {
   })
 }
 
-const deleteNote = () =>
-  fetch(`/api/notes`, {
+const deleteNote = (noteValueSet) => {
+  fetch(`/api/notes?title=${noteValueSet.title}&text=${noteValueSet.text}&noteID=${noteValueSet.noteID}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-  });
+  })
+  console.log(noteValueSet)
+}
 
+
+//DONE
 const renderActiveNote = () => {
   hide(saveNoteBtn);
 
-  if (activeNote.id) {
+  if (activeNote.noteID) {
     noteTitle.setAttribute('readonly', true);
     noteText.setAttribute('readonly', true);
     noteTitle.value = activeNote.title;
@@ -68,6 +74,7 @@ const renderActiveNote = () => {
   }
 };
 
+//DONE
 const handleNoteSave = () => {
   const noteIDValue = noteID;
   
@@ -78,13 +85,10 @@ const handleNoteSave = () => {
   };
 
   console.log('Successful POST request:', newNote);
-  saveNote(newNote)
-    .then(
-      getAndRenderNotes()
-    )
-    .then(
-      renderActiveNote()
-    )
+  saveNote(newNote);
+  getAndRenderNotes();
+  renderActiveNote();
+  
 };
 
 // Delete the clicked note
@@ -93,26 +97,27 @@ const handleNoteDelete = (e) => {
   e.stopPropagation();
 
   const note = e.target;
-  const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
+  console.log(note);
 
-  if (activeNote.id === noteId) {
+  const noteBox = note.closest("li[class='list-group-item']");
+
+  const noteValueSet = JSON.parse(noteBox.attributes[1].value);
+
+  if (activeNote.title = noteValueSet.title) {
     activeNote = {};
   }
 
-  deleteNote(noteId)
-  .then(
+  deleteNote(noteValueSet)
     getAndRenderNotes()
-  )
-  .then(
     renderActiveNote()
-  )
 };
 
 // Sets the activeNote and displays it
 const handleNoteView = (e) => {
   e.preventDefault();
   activeNote = JSON.parse(e.target.parentElement.getAttribute('data-note'));
-  renderActiveNote();
+  console.log(activeNote)
+  renderActiveNote(activeNote);
 };
 
 // Sets the activeNote to and empty object and allows the user to enter a new note
@@ -166,15 +171,14 @@ const renderNoteList = async (db) => {
     return liEl;
   };
 
-  let jsonNotes = JSON.parse(jsonNote);
-
-  if (jsonNotes.length === 0) {
+  if (jsonNote.length === 0) {
     noteListItems.push(createLi('No saved Notes', true));
   }
 
-  jsonNotes.forEach((note) => {
+  jsonNote.forEach((note) => {
     const li = createLi(note.title);
     li.dataset.note = JSON.stringify(note);
+    li.setAttribute("noteID", note.noteID)
 
     noteListItems.push(li);
   });

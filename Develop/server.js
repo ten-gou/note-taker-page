@@ -4,6 +4,7 @@ const input = require('./db/db.json');
 const path = require('path');
 const PORT = 3001;
 const fs = require('fs');
+const { text } = require('express');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -15,12 +16,33 @@ app.get('/', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
+// filter by query code
+function filterByQuery(query, notesArray) {
+  let filteredResults = notesArray;
+  if (query.title) {
+    filteredResults = filteredResults.filter(notes => notes.title === query.title);
+  }
+  if (query.text) {
+    filteredResults = filteredResults.filter(notes => notes.text === query.text);
+  }
+  if (query.noteID) {
+    filteredResults = filteredResults.filter(notes => notes.noteID === query.noteID);
+  }
+  return filteredResults;
+}
+
 // GET request get notes
 app.get('/api/notes', (req, res) => {
-
-  let database = JSON.stringify(input);
   // Send a message to the client
-  res.json(database);
+
+  let results = input;
+  if (req.query) {
+    results = filterByQuery(req.query, results);
+    res.json(results);
+  }
+  else {
+    res.json(results);
+  }  
 
   // Log our request to the terminal
   //console.info(`${req.method} request received to get reviews`);
@@ -75,6 +97,44 @@ app.post('/api/notes', (req, res) => {
   else {
     res.json('Error in adding a note!');  
   }
+})
+
+app.delete('/api/notes', (req, res) => {
+  console.log("DELETE Request Called for /api endpoint")
+   res.send("DELETE Request Called")
+   console.log(req.query.title)
+   console.log(typeof req.query)
+
+   fs.readFile(`./db/db.json`, function read(err, data) {
+    if (err) {
+        throw err;
+    }
+
+    var noteInfo =  `,{"title":"${req.query.title}","text":"${req.query.text}","noteID":"${req.query.noteID}"}`;
+    console.log(noteInfo.length);
+
+    var position2 = data.indexOf(`,{"title":"${req.query.title}","text":"${req.query.text}","noteID":"${req.query.noteID}"}`);
+    console.log(position2);
+
+
+    var file_content = data.toString();
+
+    console.log(file_content.length);
+    var file = fs.openSync('./db/db.json','w+');
+
+    var bufferText = file_content.replace(noteInfo, '');
+    console.log(bufferText)
+    console.log(bufferText.length)
+
+    fs.writeSync(file, bufferText, err => {
+      if (err) throw new Error(err);
+   });
+
+    fs.close(file);
+    
+    
+    //data.replace(`,{"title":"${req.query.title}","text":"${req.query.text}","noteID":"${req.query.noteID}"}`, '');
+});
 })
 
 app.listen(PORT, () => {
