@@ -4,7 +4,6 @@ const input = require('./db/db.json');
 const path = require('path');
 const PORT = process.env.PORT || 3001;
 const fs = require('fs');
-const { text } = require('express');
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -29,7 +28,6 @@ function filterByQuery(query, notesArray) {
 
 // GET request get notes
 app.get('/api/notes', (req, res) => {
-
   res.clearCookie(this.cookie, { path: '/api/notes' });
   // Send a message to the client
 
@@ -40,6 +38,7 @@ app.get('/api/notes', (req, res) => {
   }
   else {
     res.json(results);
+    console.log(results);
   }  
 
   // Log our request to the terminal

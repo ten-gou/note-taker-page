@@ -4,7 +4,6 @@ let saveNoteBtn;
 let newNoteBtn;
 let noteList;
 
-console.log(window.location.pathname)
 if (window.location.pathname === '/notes.html') {
   noteTitle = document.querySelector('.note-title');
   noteText = document.querySelector('.note-textarea');
@@ -38,7 +37,7 @@ const noteID = () => {
 let activeNote = {};
 
 //DONE?
-const getNotes = () =>
+const getNotes = () => 
   fetch('/api/notes', {
     method: 'GET',
     headers: {
@@ -128,7 +127,7 @@ const handleNoteView = (e) => {
 };
 
 // Sets the activeNote to and empty object and allows the user to enter a new note
-const handleNewNoteView = (e) => {
+const handleNewNoteView = () => {
   activeNote = {};
   renderActiveNote();
 };
@@ -136,14 +135,18 @@ const handleNewNoteView = (e) => {
 const handleRenderSaveBtn = () => {
   if (!noteTitle.value.trim() || !noteText.value.trim()) {
     hide(saveNoteBtn);
+    show(newNoteBtn);
   } else {
     show(saveNoteBtn);
+    hide(newNoteBtn);
   }
 };
 
 // Render the list of note titles
 const renderNoteList = async (db) => {
   let jsonNote = await db.json();
+
+  console.log(jsonNote)
   if (window.location.pathname === '/notes.html') {
     noteList.forEach((el) => (el.innerHTML = ''));
   }
@@ -197,7 +200,7 @@ const renderNoteList = async (db) => {
 };
 
 // Gets notes from the db and renders them to the sidebar
-const getAndRenderNotes = () => getNotes().then(renderNoteList);
+//getNotes(data).then(renderNoteList(data));
 
 if (window.location.pathname === '/notes.html') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
@@ -206,5 +209,6 @@ if (window.location.pathname === '/notes.html') {
   noteText.addEventListener('keyup', handleRenderSaveBtn);
 }
 
-getAndRenderNotes();
+const getAndRenderNotes = () => getNotes().then(renderNoteList);
 
+getAndRenderNotes();
